@@ -84,7 +84,11 @@ def rollout(board: Board, state):
         state: The terminal game state
 
     """
-    pass
+    while not board.is_ended(state):
+        action = choice(board.legal_actions(state)) #choice() chooses a "random" element from a non empty sequence.
+        state = board.next_state(state, action)
+    return state
+    #pass
 
 
 def backpropagate(node: MCTSNode|None, won: bool):
@@ -95,7 +99,12 @@ def backpropagate(node: MCTSNode|None, won: bool):
         won:    An indicator of whether the bot won or lost the game.
 
     """
-    pass
+    while node is not None:
+        node.visits += 1
+        node.wins += int(won)
+        node = node.parent
+    #nothing to return.
+    #pass
 
 def ucb(node: MCTSNode, is_opponent: bool):
     """ Calcualtes the UCB value for the given node from the perspective of the bot
