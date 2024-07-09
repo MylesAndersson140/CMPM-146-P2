@@ -23,7 +23,21 @@ def traverse_nodes(node: MCTSNode, board: Board, state, bot_identity: int):
         state: The state associated with that node
 
     """
-    pass
+    while not board.is_ended(state):
+        if node.untried_actions:
+            return node, state
+        
+        #find the child with the best UCB score
+        best_score = float('-inf')
+        best_child = None
+        best_action = None
+        for action, child in node.child_nodes.items():
+            score = ucb(child, board.current_player(state) != bot_identity)
+            if score > best_score:
+                best_score = score
+                best_child = child
+                best_action = action
+    #pass
 
 def expand_leaf(node: MCTSNode, board: Board, state):
     """ Adds a new leaf to the tree by creating a new child node for the given node (if it is non-terminal).
@@ -38,7 +52,17 @@ def expand_leaf(node: MCTSNode, board: Board, state):
         state: The state associated with that node
 
     """
-    pass
+
+    if not node.untried_actions:
+        return node, state
+    
+    action = node.untried_actions.pop()
+    next_state = board.next_state(state, action)
+    child_node = MCTSNode(parent = node, parent_action = action, action_list = board.legal_actions(next_state))
+    node.child_nodes[action] = child_node
+
+    return child_node, next_state
+    #pass
 
 
 def rollout(board: Board, state):
@@ -67,6 +91,8 @@ def backpropagate(node: MCTSNode|None, won: bool):
 
 def ucb(node: MCTSNode, is_opponent: bool):
     """ Calcualtes the UCB value for the given node from the perspective of the bot
+
+    A function to figure out which node to traverse to based on number of wins and visits.
 
     Args:
         node:   A node.
