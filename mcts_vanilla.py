@@ -37,6 +37,14 @@ def traverse_nodes(node: MCTSNode, board: Board, state, bot_identity: int):
                 best_score = score
                 best_child = child
                 best_action = action
+
+        if best_child is None:
+            return node, state
+        
+        node = best_child
+        state = board.next_state(state, best_action)
+
+    return node, state
     #pass
 
 def expand_leaf(node: MCTSNode, board: Board, state):
@@ -100,7 +108,18 @@ def ucb(node: MCTSNode, is_opponent: bool):
     Returns:
         The value of the UCB function for the given node
     """
-    pass
+    # negative = loss
+    # positive = win
+    # 0 = draw (check at the end)
+
+    # UCB = win rate + exploration factor * sqrt(ln(total visits) / visits from this node)
+    # win rate = wins / visits
+    # exploration factor = 2
+
+    if node.visits == 0:
+        return float('inf') # if the node has not been visited, visit it (may change later?)
+    
+    #pass
 
 def get_best_action(root_node: MCTSNode):
     """ Selects the best action from the root node in the MCTS tree
@@ -111,7 +130,17 @@ def get_best_action(root_node: MCTSNode):
         action: The best action from the root node
     
     """
-    pass
+
+    best_action = None
+    best_score = float('-inf')
+    for action, child in root_node.child_nodes.items():
+        if child.visits > best_score:
+            best_score = child.visits
+            best_action = action
+
+    return best_action
+
+    #pass
 
 def is_win(board: Board, state, identity_of_bot: int):
     # checks if state is a win state for identity_of_bot
