@@ -92,13 +92,14 @@ def heuristic(board: Board, state):
                 # if the action would win the game, always choose that action
                 # if the action would block the opponent from winning, always choose that action
 
-        # two x's in a row, always fill in the 3rd x
+        # Heuristic Constraint #1 for winning: two x's in a row, always fill in the 3rd x
+        # current player is x
         if board.current_player(state) == 1:
             for i in range(3):
                 for j in range(3):
                     # if there's an x in the first box
                     if state[i][j] == 1:
-                        # if the next two boxes are also x's, fill in the 3rd box
+                        # if the first two boxes are x's, fill in the 3rd box
                         if state[i][j+1] == 1 and state[i][j+2] == 0:
                             return board.next_state(state, (i, j+2))
                         # if the 2nd box is empty and the 3rd box is an x, fill in the 2nd box
@@ -119,13 +120,14 @@ def heuristic(board: Board, state):
                         if state[i][j+1] == 1 and state[i][j+2] == 0:
                             return board.next_state(state, (i, j+2))
 
-        # two o's in a row, always fill an x in the 3rd box to block the opponent
+        # Heuristic Constraint #2 for blocking a loss: two o's in a row, always fill an x in the 3rd box to block the opponent
+        # pervious player is o
         if board.previous_player(state) == 1:
             for i in range(3):
                 for j in range(3):
                     # if there's an o in the first box
                     if state[i][j] == 2:
-                        # if the next two boxes are also o's, fill in the 3rd box with an x
+                        # if the first two boxes are o's, fill in the 3rd box with an x
                         if state[i][j+1] == 2 and state[i][j+2] == 0:
                             return board.next_state(state, (i, j+2))
                         # if the 2nd box is empty and the 3rd box is an o, fill in the 2nd box with an x
@@ -145,13 +147,6 @@ def heuristic(board: Board, state):
                         # if the 2nd box is an o and the 3rd box is empty, fill in the 3rd box with an x
                         if state[i][j+1] == 2 and state[i][j+2] == 0:
                             return board.next_state(state, (i, j+2))
-
-        # if board.points_values(state) > 0:
-        #     return board.next_state(state, action)
-        # if board.points_values(state) == 0:
-        #     return board.next_state(state, action)
-        # if board.points_values(state) < 0:
-        #     return board.next_state(state, action)
 
     state = board.next_state(state, action)
     return state
