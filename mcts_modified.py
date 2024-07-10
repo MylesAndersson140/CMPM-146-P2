@@ -73,7 +73,7 @@ def expand_leaf(node: MCTSNode, board: Board, state):
     #pass
 
 
-def rollout(board: Board, state):
+def heuristic(board: Board, state):
     """ Given the state of the game, the rollout plays out the remainder randomly.
 
     Args:
@@ -85,8 +85,27 @@ def rollout(board: Board, state):
 
     """
     while not board.is_ended(state):
-        action = choice(board.legal_actions(state)) #choice() chooses a "random" element from a non empty sequence.
-        state = board.next_state(state, action)
+        # heuristic option
+            # always choose the action that maximizes the heuristic value
+            # the heuristic value is the sum of the values of the boxes that the action would capture
+
+        # examples:
+            # two x's in a row, always fill in the 3rd x
+            # two 0's in a row, always fill an x in the 3rd box to block the opponent
+
+        # psuedocode:
+            # for each action in legal_actions:
+                # if action would win the game, return the new state
+                # if action would block the opponent from winning, return the new state
+            # return the new state after choosing the action that maximizes the heuristic value
+
+        action = choice(board.legal_actions(state))
+        if board.points_values(state)[1] == 1:
+            return board.next_state(state, action)
+        if board.points_values(state)[2] == 1:
+            return board.next_state(state, action)
+
+    state = board.next_state(state, action)
     return state
     #pass
 
@@ -190,7 +209,7 @@ def think(board: Board, current_state):
         node, state = expand_leaf(node, board, state)
 
         # Simulation
-        simulation_result = rollout(board, state)
+        simulation_result = heuristic(board, state)
 
         # Backpropagation
         backpropagate(node, is_win(board, simulation_result, bot_identity))
