@@ -105,9 +105,6 @@ def heuristic(board: Board, state):
                         # if the 2nd box is empty and the 3rd box is an x, fill in the 2nd box
                         if state[i][j+1] == 0 and state[i][j+2] == 1:
                             return board.next_state(state, (i, j+1))
-                        # if the 2nd and 3rd boxes are x's, fill in the 4th box
-                        if state[i][j+1] == 1 and state[i][j+2] == 1:
-                            return board.next_state(state, (i, j+3))
                     # if there's an empty box
                     if state[i][j] == 0:
                         # if the next two boxes are x's, fill in the 1st box
@@ -133,9 +130,6 @@ def heuristic(board: Board, state):
                         # if the 2nd box is empty and the 3rd box is an o, fill in the 2nd box with an x
                         if state[i][j+1] == 0 and state[i][j+2] == 2:
                             return board.next_state(state, (i, j+1))
-                        # if the 2nd and 3rd boxes are o's, fill in the 4th box
-                        if state[i][j+1] == 2 and state[i][j+2] == 2:
-                            return board.next_state(state, (i, j+3))
                     # if there's an empty box
                     if state[i][j] == 0:
                         # if the next two boxes are o's, fill in the 1st box with an x
