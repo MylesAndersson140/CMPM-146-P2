@@ -85,30 +85,77 @@ def heuristic(board: Board, state):
 
     """
     while not board.is_ended(state):
+        action = choice(board.legal_actions(state))
         # heuristic option
             # always choose the action that maximizes the heuristic value
             # the heuristic value is the sum of the values of the boxes that the action would capture
+                # if the action would win the game, always choose that action
+                # if the action would block the opponent from winning, always choose that action
 
-        # examples:
-            # two x's in a row, always fill in the 3rd x
-            # two 0's in a row, always fill an x in the 3rd box to block the opponent
+        # two x's in a row, always fill in the 3rd x
+        if board.current_player(state) == 1:
+            for i in range(3):
+                for j in range(3):
+                    # if there's an x in the first box
+                    if state[i][j] == 1:
+                        # if the next two boxes are also x's, fill in the 3rd box
+                        if state[i][j+1] == 1 and state[i][j+2] == 0:
+                            return board.next_state(state, (i, j+2))
+                        # if the 2nd box is empty and the 3rd box is an x, fill in the 2nd box
+                        if state[i][j+1] == 0 and state[i][j+2] == 1:
+                            return board.next_state(state, (i, j+1))
+                        # if the 2nd and 3rd boxes are x's, fill in the 4th box
+                        if state[i][j+1] == 1 and state[i][j+2] == 1:
+                            return board.next_state(state, (i, j+3))
+                    # if there's an empty box
+                    if state[i][j] == 0:
+                        # if the next two boxes are x's, fill in the 1st box
+                        if state[i][j+1] == 1 and state[i][j+2] == 1:
+                            return board.next_state(state, (i, j))
+                        # if the 2nd box is empty and the 3rd box is an x, fill in the 2nd box
+                        if state[i][j+1] == 0 and state[i][j+2] == 1:
+                            return board.next_state(state, (i, j+1))
+                        # if the 2nd box is an x and the 3rd box is empty, fill in the 3rd box
+                        if state[i][j+1] == 1 and state[i][j+2] == 0:
+                            return board.next_state(state, (i, j+2))
 
-        # psuedocode:
-            # for each action in legal_actions:
-                # if action would win the game, return the new state
-                # if action would block the opponent from winning, return the new state
-            # return the new state after choosing the action that maximizes the heuristic value
+        # two o's in a row, always fill an x in the 3rd box to block the opponent
+        if board.previous_player(state) == 1:
+            for i in range(3):
+                for j in range(3):
+                    # if there's an o in the first box
+                    if state[i][j] == 2:
+                        # if the next two boxes are also o's, fill in the 3rd box with an x
+                        if state[i][j+1] == 2 and state[i][j+2] == 0:
+                            return board.next_state(state, (i, j+2))
+                        # if the 2nd box is empty and the 3rd box is an o, fill in the 2nd box with an x
+                        if state[i][j+1] == 0 and state[i][j+2] == 2:
+                            return board.next_state(state, (i, j+1))
+                        # if the 2nd and 3rd boxes are o's, fill in the 4th box
+                        if state[i][j+1] == 2 and state[i][j+2] == 2:
+                            return board.next_state(state, (i, j+3))
+                    # if there's an empty box
+                    if state[i][j] == 0:
+                        # if the next two boxes are o's, fill in the 1st box with an x
+                        if state[i][j+1] == 2 and state[i][j+2] == 2:
+                            return board.next_state(state, (i, j))
+                        # if the 2nd box is empty and the 3rd box is an o, fill in the 2nd box with an x
+                        if state[i][j+1] == 0 and state[i][j+2] == 2:
+                            return board.next_state(state, (i, j+1))
+                        # if the 2nd box is an o and the 3rd box is empty, fill in the 3rd box with an x
+                        if state[i][j+1] == 2 and state[i][j+2] == 0:
+                            return board.next_state(state, (i, j+2))
 
-        action = choice(board.legal_actions(state))
-        if board.points_values(state)[1] == 1:
-            return board.next_state(state, action)
-        if board.points_values(state)[2] == 1:
-            return board.next_state(state, action)
+        # if board.points_values(state) > 0:
+        #     return board.next_state(state, action)
+        # if board.points_values(state) == 0:
+        #     return board.next_state(state, action)
+        # if board.points_values(state) < 0:
+        #     return board.next_state(state, action)
 
     state = board.next_state(state, action)
     return state
     #pass
-
 
 def backpropagate(node: MCTSNode|None, won: bool):
     """ Navigates the tree from a leaf node to the root, updating the win and visit count of each node along the path.
