@@ -195,9 +195,6 @@ def think(board: Board, current_state):
         # Backpropagation
         backpropagate(node, is_win(board, simulation_result, bot_identity))
 
-        # Pick the best action
-        best_action = get_best_action(root_node)
-
     # end of our work
 
     # Return an action, typically the most frequently used action (from the root) or the action with the best
