@@ -128,6 +128,12 @@ def ucb(node: MCTSNode, is_opponent: bool):
     if node.visits == 0:
         return float('inf') # if the node has not been visited, visit it (may change later?)
     
+    win_rate = node.wins / node.visits
+    exploration = explore_faction * sqrt(log(node.parent.visits) / node.visits)
+    if is_opponent:
+        win_rate = 1 - win_rate
+    return win_rate + exploration
+    
     #pass
 
 def get_best_action(root_node: MCTSNode):
@@ -174,8 +180,25 @@ def think(board: Board, current_state):
         state = current_state
         node = root_node
 
-        # Do MCTS - This is all you!
-        # ...
+        # Do MCTS - This is all you! 
+        # beginning of our work
+
+        # Selection
+        node, state = traverse_nodes(node, board, state, bot_identity)
+
+        # Expansion
+        node, state = expand_leaf(node, board, state)
+
+        # Simulation
+        simulation_result = rollout(board, state)
+
+        # Backpropagation
+        backpropagate(node, is_win(board, simulation_result, bot_identity))
+
+        # Pick the best action
+        best_action = get_best_action(root_node)
+
+    # end of our work
 
     # Return an action, typically the most frequently used action (from the root) or the action with the best
     # estimated win rate.
