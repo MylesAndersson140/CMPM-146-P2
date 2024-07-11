@@ -101,69 +101,6 @@ def heuristic_rollout(board: Board, state, bot_identity: int):
 
     return state
     #pass
-    """
-    while not board.is_ended(state):
-        action = choice(board.legal_actions(state))
-        # heuristic option
-            # always choose the action that maximizes the heuristic value
-            # the heuristic value is the sum of the values of the boxes that the action would capture
-                # if the action would win the game, always choose that action
-                # if the action would block the opponent from winning, always choose that action
-
-        # Heuristic Constraint #1 for winning: two x's in a row, always fill in the 3rd x
-        # current player is x
-        if board.current_player(state) == 1:
-            for i in range(3):
-                for j in range(3):
-                    # if there's an x in the first box
-                    if state[i][j] == 1:
-                        # if the first two boxes are x's, fill in the 3rd box
-                        if state[i][j+1] == 1 and state[i][j+2] == 0:
-                            return board.next_state(state, (i, j+2))
-                        # if the 2nd box is empty and the 3rd box is an x, fill in the 2nd box
-                        if state[i][j+1] == 0 and state[i][j+2] == 1:
-                            return board.next_state(state, (i, j+1))
-                    # if there's an empty box
-                    if state[i][j] == 0:
-                        # if the next two boxes are x's, fill in the 1st box
-                        if state[i][j+1] == 1 and state[i][j+2] == 1:
-                            return board.next_state(state, (i, j))
-                        # if the 2nd box is empty and the 3rd box is an x, fill in the 2nd box
-                        if state[i][j+1] == 0 and state[i][j+2] == 1:
-                            return board.next_state(state, (i, j+1))
-                        # if the 2nd box is an x and the 3rd box is empty, fill in the 3rd box
-                        if state[i][j+1] == 1 and state[i][j+2] == 0:
-                            return board.next_state(state, (i, j+2))
-
-        # Heuristic Constraint #2 for blocking a loss: two o's in a row, always fill an x in the 3rd box to block the opponent
-        # pervious player is o
-        if board.previous_player(state) == 1:
-            for i in range(3):
-                for j in range(3):
-                    # if there's an o in the first box
-                    if state[i][j] == 2:
-                        # if the first two boxes are o's, fill in the 3rd box with an x
-                        if state[i][j+1] == 2 and state[i][j+2] == 0:
-                            return board.next_state(state, (i, j+2))
-                        # if the 2nd box is empty and the 3rd box is an o, fill in the 2nd box with an x
-                        if state[i][j+1] == 0 and state[i][j+2] == 2:
-                            return board.next_state(state, (i, j+1))
-                    # if there's an empty box
-                    if state[i][j] == 0:
-                        # if the next two boxes are o's, fill in the 1st box with an x
-                        if state[i][j+1] == 2 and state[i][j+2] == 2:
-                            return board.next_state(state, (i, j))
-                        # if the 2nd box is empty and the 3rd box is an o, fill in the 2nd box with an x
-                        if state[i][j+1] == 0 and state[i][j+2] == 2:
-                            return board.next_state(state, (i, j+1))
-                        # if the 2nd box is an o and the 3rd box is empty, fill in the 3rd box with an x
-                        if state[i][j+1] == 2 and state[i][j+2] == 0:
-                            return board.next_state(state, (i, j+2))
-
-    state = board.next_state(state, action)
-    return state
-    #pass
-    """
 
 def backpropagate(node: MCTSNode|None, won: bool):
     """ Navigates the tree from a leaf node to the root, updating the win and visit count of each node along the path.
