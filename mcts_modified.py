@@ -4,7 +4,7 @@ from p2_t3 import Board
 from random import choice
 from math import sqrt, log
 
-num_nodes = 100
+num_nodes = 500
 explore_faction = 2.
 
 def traverse_nodes(node: MCTSNode, board: Board, state, bot_identity: int):
@@ -73,7 +73,7 @@ def expand_leaf(node: MCTSNode, board: Board, state):
     #pass
 
 
-def heuristic(board: Board, state):
+def heuristic_rollout(board: Board, state, bot_identity: int):
     """ Given the state of the game, the rollout plays out the remainder randomly.
 
     Args:
@@ -83,6 +83,24 @@ def heuristic(board: Board, state):
     Returns:
         state: The terminal game state
 
+    """
+    while not board.is_ended(state):
+        actions = board.legal_actions(state)
+        if not actions:
+            break
+
+        # Quick check for box completion
+        for action in actions:
+            next_state = board.next_state(state, action)
+            if board.owned_boxes(next_state) != board.owned_boxes(state):
+                state = next_state
+                break
+        else:
+            # If no box completion, choose a random action
+            state = board.next_state(state, choice(actions))
+
+    return state
+    #pass
     """
     while not board.is_ended(state):
         action = choice(board.legal_actions(state))
@@ -145,6 +163,7 @@ def heuristic(board: Board, state):
     state = board.next_state(state, action)
     return state
     #pass
+    """
 
 def backpropagate(node: MCTSNode|None, won: bool):
     """ Navigates the tree from a leaf node to the root, updating the win and visit count of each node along the path.
@@ -245,7 +264,8 @@ def think(board: Board, current_state):
         node, state = expand_leaf(node, board, state)
 
         # Simulation
-        simulation_result = heuristic(board, state)
+        simulation_result = heuristic_rollout(board, state, bot_identity)
+
 
         # Backpropagation
         backpropagate(node, is_win(board, simulation_result, bot_identity))
